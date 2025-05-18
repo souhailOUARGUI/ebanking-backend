@@ -18,8 +18,10 @@ public class AccountOperation  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private double amount;
-    private OperationType operationType;
     private Date operationDate;
+    @Enumerated(EnumType.STRING)
+    private OperationType operationType;
     @ManyToOne
     private BankAccount bankAccount;
+    private String description;
 }
