@@ -1,11 +1,9 @@
 package ma.enset.ebankingbackend;
 
 import ma.enset.ebankingbackend.dtos.AccountOperationDTO;
-import ma.enset.ebankingbackend.entities.BankAccount;
-import ma.enset.ebankingbackend.entities.CurrentAccount;
-import ma.enset.ebankingbackend.entities.Customer;
-import ma.enset.ebankingbackend.entities.SavingAccount;
+import ma.enset.ebankingbackend.entities.*;
 import ma.enset.ebankingbackend.enums.AccountStatus;
+import ma.enset.ebankingbackend.enums.OperationType;
 import ma.enset.ebankingbackend.repositories.AccountOperationRepository;
 import ma.enset.ebankingbackend.repositories.BankAccountRepository;
 import ma.enset.ebankingbackend.repositories.CustomerRepository;
@@ -56,8 +54,10 @@ public class EbankingBackendApplication {
 //                savingAccount.setCurrency("USD");
 //                savingAccount.setCustomer(cust);
 //                bankAccountRepository.save(savingAccount);
-//
 //            });
+
+
+
 
             BankAccount bankAccount = bankAccountRepository.findById("01c8eee9-7242-4439-acfd-1be354846ea9").orElse(null);
             System.out.println("********************");
@@ -70,8 +70,22 @@ public class EbankingBackendApplication {
             if (bankAccount instanceof CurrentAccount){
                System.out.println("Over Draft=> "+ ((CurrentAccount) bankAccount).getOverdraft());
             }else if (bankAccount instanceof SavingAccount){
-                System.out.println("Over Draft=> "+  ((SavingAccount) bankAccount).getInterestRate());
+                System.out.println("Interest Rate=> "+  ((SavingAccount) bankAccount).getInterestRate());
             }
+
+            bankAccountRepository.findAll().forEach(acc -> {
+                for (int i = 0; i <10 ; i++) {
+                    AccountOperation accountOperation = new AccountOperation();
+                    accountOperation.setBankAccount(acc);
+                    accountOperation.setOperationDate(new Date());
+                    accountOperation.setAmount(Math.random()*1000);
+                    accountOperation.setOperationType(Math.random()>0.5? OperationType.DEBIT:OperationType.CREDIT);
+                    accountOperationRepository.save(accountOperation);
+                }
+            });
+
+
+
 
         };
     }
