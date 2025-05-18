@@ -13,5 +13,4 @@ private Date operationDate;
 private OperationType operationType;
 private String description;
 //private BankAccountDTO bankAccount;
-
 }
