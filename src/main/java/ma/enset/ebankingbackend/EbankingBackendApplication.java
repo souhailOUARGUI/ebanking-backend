@@ -73,18 +73,20 @@ public class EbankingBackendApplication {
                 System.out.println("Interest Rate=> "+  ((SavingAccount) bankAccount).getInterestRate());
             }
 
-            bankAccountRepository.findAll().forEach(acc -> {
-                for (int i = 0; i <10 ; i++) {
-                    AccountOperation accountOperation = new AccountOperation();
-                    accountOperation.setBankAccount(acc);
-                    accountOperation.setOperationDate(new Date());
-                    accountOperation.setAmount(Math.random()*1000);
-                    accountOperation.setOperationType(Math.random()>0.5? OperationType.DEBIT:OperationType.CREDIT);
-                    accountOperationRepository.save(accountOperation);
-                }
+//            bankAccountRepository.findAll().forEach(acc -> {
+//                for (int i = 0; i <10 ; i++) {
+//                    AccountOperation accountOperation = new AccountOperation();
+//                    accountOperation.setBankAccount(acc);
+//                    accountOperation.setOperationDate(new Date());
+//                    accountOperation.setAmount(Math.random()*1000);
+//                    accountOperation.setOperationType(Math.random()>0.5? OperationType.DEBIT:OperationType.CREDIT);
+//                    accountOperationRepository.save(accountOperation);
+//                }
+//            });
+
+            bankAccount.getAccountOperationsList().forEach(accOp -> {
+                System.out.println(accOp.getOperationType() );
             });
-
-
 
 
         };
