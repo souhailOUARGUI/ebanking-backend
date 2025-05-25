@@ -31,12 +31,17 @@ public class EbankingBackendApplication {
     CommandLineRunner commandLineRunner(BankAccountService bankAccountService){
         return args -> {
 
-            Stream.of("Hassan","Imane","Mohamed").forEach(name->{
-                CustomerDTO customer=new CustomerDTO();
-                customer.setName(name);
-                customer.setEmail(name+"@gmail.com");
-                bankAccountService.saveCustomer(customer);
+//            Stream.of("amine","aziz","Mohamed").forEach(name->{
+//                CustomerDTO customer=new CustomerDTO();
+//                customer.setName(name);
+//                customer.setEmail(name+"@gmail.com");
+//                bankAccountService.saveCustomer(customer);
+//            });
+
+            bankAccountService.bankAccountList().forEach(bankAccountDTO -> {
+                System.out.println(bankAccountDTO.getType());
             });
+
 
 
 //            bankAccountService.listCustomers().forEach(customer->{
