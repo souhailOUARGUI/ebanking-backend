@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ma.enset.ebankingbackend.dtos.*;
 import ma.enset.ebankingbackend.entities.*;
+import ma.enset.ebankingbackend.enums.AccountStatus;
 import ma.enset.ebankingbackend.enums.OperationType;
 import ma.enset.ebankingbackend.exceptions.BalanceNotSufficientException;
 import ma.enset.ebankingbackend.exceptions.BankAccountNotFoundException;
@@ -37,8 +38,14 @@ public class BankAccountServiceImpl  implements BankAccountService{
 
     @Override
     public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
-       log.info("Saving new Customer");
-        Customer customer=dtoMapper.fromCustomerDTO(customerDTO);
+        log.info("Saving new Customer");
+        Customer customer = dtoMapper.fromCustomerDTO(customerDTO);
+        
+        // Assurez-vous que l'ID est null pour une nouvelle entité
+        if (customerDTO.getId() == null || customerDTO.getId() == 0) {
+            customer.setId(null);
+        }
+        
         Customer savedCustomer = customerRepository.save(customer);
         return dtoMapper.fromCustomer(savedCustomer);
     }
@@ -51,9 +58,11 @@ public class BankAccountServiceImpl  implements BankAccountService{
             throw new CustomerNotFoundException("Customer not found");
         }
         CurrentAccount currentAccount = new CurrentAccount() ;
+        currentAccount.setId(java.util.UUID.randomUUID().toString());
         currentAccount.setCreatedAt(new java.util.Date());
         currentAccount.setBalance(initialBalance);
         currentAccount.setCurrency("USD");
+        currentAccount.setStatus(AccountStatus.CREATED);
         currentAccount.setOverdraft(overDraft);
         currentAccount.setCustomer(customer);
 
@@ -68,9 +77,11 @@ public class BankAccountServiceImpl  implements BankAccountService{
             throw new CustomerNotFoundException("Customer not found");
         }
         SavingAccount savingAcc = new SavingAccount() ;
+        savingAcc.setId(java.util.UUID.randomUUID().toString());
         savingAcc.setCreatedAt(new java.util.Date());
         savingAcc.setBalance(initialBalance);
         savingAcc.setCurrency("USD");
+        savingAcc.setStatus(AccountStatus.CREATED);
         savingAcc.setInterestRate(interestRate);
         savingAcc.setCustomer(customer);
 
@@ -173,6 +184,18 @@ public class BankAccountServiceImpl  implements BankAccountService{
     @Override
     public void deleteCustomer(Long customerId){
         customerRepository.deleteById(customerId);
+    }
+
+    @Override
+    public void deleteBankAccount(String accountId) throws BankAccountNotFoundException {
+        BankAccount bankAccount = bankAccountRepository.findById(accountId)
+                .orElseThrow(() -> new BankAccountNotFoundException("Bank Account not found"));
+
+        // First delete all related account operations
+        accountOperationRepository.deleteByBankAccount(bankAccount);
+
+        // Then delete the bank account
+        bankAccountRepository.delete(bankAccount);
     }
 
     @Override

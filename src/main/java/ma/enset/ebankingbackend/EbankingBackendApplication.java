@@ -10,11 +10,15 @@ import ma.enset.ebankingbackend.repositories.BankAccountRepository;
 import ma.enset.ebankingbackend.repositories.CustomerRepository;
 import ma.enset.ebankingbackend.services.BankAccountService;
 import ma.enset.ebankingbackend.services.BankService;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -117,10 +121,26 @@ public class EbankingBackendApplication {
 //                }
 //            });
 
-
-
-
         };
+    }
+
+    @Bean
+    public CorsFilter corsFilter(){
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        // Fix: Don't convert list to string
+        config.addAllowedOrigin("http://localhost:4200");
+        
+        config.setAllowedHeaders(Arrays.asList("Origin","Access-Control-Allow-Origin","Content-Type",
+                "Accept","Authorization","Origin,Accept","X-Request-With","Access-Control-Request-Method",
+                "Access-Control-Request-Headers"));
+        config.setExposedHeaders(Arrays.asList("Origin","Content-Type","Accept","Authorization","Access-Control-Allow-Origin",
+                "Access-Control-Allow-Origin","Access-Control-Allow-Credentials"));
+        config.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
+        
+        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**",config);
+        return new CorsFilter(urlBasedCorsConfigurationSource);
     }
 
 }
